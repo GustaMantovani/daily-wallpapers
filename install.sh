@@ -2,8 +2,9 @@
 gcc daily-wallpapers.c -lmagic
 
 mkdir ~/.dw
-cp * ~/.dw
+cp run.sh ~/.dw
+cp a.out ~/.dw
 
-~/.dw/config.sh
+./config.sh
 
 
