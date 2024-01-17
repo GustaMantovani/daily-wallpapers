@@ -33,10 +33,10 @@ while true; do
         2)
             # Configurar o cron job para executar o script sempre à meia-noite
             cp anacrontab ~/.anacron/etc/
-
-            echo "Exec=/usr/sbin/anacron -s -t $HOME/.anacron/etc/anacrontab -S $HOME/.anacron/spool" >> daily-wallpaper.desktop
-
             cp daily-wallpaper.desktop ~/.config/autostart/
+
+            echo "Exec=/usr/sbin/anacron -s -t $HOME/.anacron/etc/anacrontab -S $HOME/.anacron/spool" >> ~/.config/autostart/daily-wallpaper.desktop
+            
             echo "Configurado para trocar o wallpaper sempre à meia-noite."
             break
             ;;
