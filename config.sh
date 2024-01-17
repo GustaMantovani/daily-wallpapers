@@ -17,7 +17,7 @@ echo $caminho > ~/.dw/dw.conf
 while true; do
     echo "Escolha uma opção:"
     echo "1. Rodar o script a cada t minutos"
-    echo "2. Executar o script sempre à meia-noite"
+    echo "2. Executar o script sempre todo dia"
 
     read opcao
 
@@ -32,7 +32,11 @@ while true; do
             ;;
         2)
             # Configurar o cron job para executar o script sempre à meia-noite
-            echo "1       0       wallpaper.daily         /bin/bash ~/.dw/run.sh" | sudo tee -a /etc/anacrontab
+            cp anacrontab ~/.anacron/etc/
+
+            echo "Exec=/usr/sbin/anacron -s -t $HOME/.anacron/etc/anacrontab -S $HOME/.anacron/spool" >> daily-wallpaper.desktop
+
+            cp daily-wallpaper.desktop ~/.config/autostart/
             echo "Configurado para trocar o wallpaper sempre à meia-noite."
             break
             ;;
@@ -42,4 +46,4 @@ while true; do
     esac
 done
 
-~/.dw/run.sh
+/usr/sbin/anacron -s -t $HOME/.anacron/etc/anacrontab -S $HOME/.anacron/spool
