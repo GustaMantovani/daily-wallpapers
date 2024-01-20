@@ -36,7 +36,7 @@ while true; do
             cp daily-wallpaper.desktop ~/.config/autostart/
 
             echo -e "\nExec=/usr/sbin/anacron -s -t $HOME/.anacron/etc/anacrontab -S $HOME/.anacron/spool" >> ~/.config/autostart/daily-wallpaper.desktop
-            (crontab -l ; echo "0 0 * * * ~/.dw/run.sh") | crontab -
+            (crontab -l ; echo "0 0 * * * /usr/sbin/anacron -s -t $HOME/.anacron/etc/anacrontab -S $HOME/.anacron/spool") | crontab -
             echo "Configurado para trocar o wallpaper todo dia."
             break
             ;;
