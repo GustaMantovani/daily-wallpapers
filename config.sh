@@ -17,7 +17,7 @@ echo $caminho > ~/.dw/dw.conf
 while true; do
     echo "Escolha uma opção:"
     echo "1. Rodar o script a cada t minutos"
-    echo "2. Executar o script sempre todo dia"
+    echo "2. Executar o script todo dia"
 
     read opcao
 
@@ -36,8 +36,8 @@ while true; do
             cp daily-wallpaper.desktop ~/.config/autostart/
 
             echo -e "\nExec=/usr/sbin/anacron -s -t $HOME/.anacron/etc/anacrontab -S $HOME/.anacron/spool" >> ~/.config/autostart/daily-wallpaper.desktop
-            
-            echo "Configurado para trocar o wallpaper sempre à meia-noite."
+            (crontab -l ; echo "0 0 * * * ~/.dw/run.sh") | crontab -
+            echo "Configurado para trocar o wallpaper todo dia."
             break
             ;;
         *)
