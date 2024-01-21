@@ -1,5 +1,5 @@
 #!/bin/bash
-gcc daily-wallpapers.c -lmagic
+gcc -O3 -std=c11 -pedantic -s daily-wallpapers.c -lmagic
 
 mkdir ~/.dw
 mkdir -p ~/.anacron/{etc,spool}

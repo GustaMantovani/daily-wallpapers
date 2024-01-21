@@ -1,13 +1,12 @@
 # Daily Wallpapers
 Esse repositório contém um script simples para alterar os papéis de parede do gnome de forma dinâmica e automatizada alternando de forma circular entre imagens de uma pasta.
 
-
 ## Proposta
 Diferente do Windows, o gnome não suprota a seleção de várias imagens para servirem como background da área de trabalho. Por isso, eu decidi criar um script que, em algum grau, possibilitasse isso. 
 
 
 ## Abordagem
-O objetuvo do projeto é não ser inconveniente e nem inconsistente, de forma que o usuário ainda possa criar, mover ou apagar arquivos no diretório que contém as imagens que servirão de wallpaper. 
+O objetivo do projeto é não ser inconveniente e nem inconsistente, de forma que o usuário ainda possa criar, mover ou apagar arquivos no diretório que contém as imagens que servirão de wallpaper. 
 
 
 O funcionamento geral do código envolve a gestão do estado atual do wallpaper, a seleção do próximo wallpaper a partir de um diretório especificado pelo usuário, e a interação com as configurações do ambiente GNOME.
