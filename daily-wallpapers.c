@@ -156,7 +156,7 @@ int main(){
     //setar o primeiro candidato como wallpaper
     setarPrimeiroCandidatoWpp(path);
   }else{
-    //buscar na lista e setar o próximo (caso seja o primeiro ou não esteja mais na lista setar o primeiro)
+    //buscar na lista e setar o próximo (caso seja o primeiro ou não esteja mais na lista, setar o primeiro)
     setarProximoCandidatoWpp(path, wallpaperAtual);
   }
 
