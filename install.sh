@@ -1,11 +1,11 @@
 #!/bin/bash
-gcc -O3 -std=c11 -pedantic -s daily-wallpapers.c -lmagic
+
+mkdir -p build
+gcc -O3 -std=c11 -pedantic -s src/daily-wallpapers.c -lmagic -o build/daily-wallpapers.bin
 
 mkdir ~/.dw
 mkdir -p ~/.anacron/{etc,spool}
-cp run.sh ~/.dw
-cp a.out ~/.dw
+cp essential/run.sh ~/.dw
+cp build/daily-wallpapers.bin ~/.dw
 
-./config.sh
-
-
+scripts/config.sh

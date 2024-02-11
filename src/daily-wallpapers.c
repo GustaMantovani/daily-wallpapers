@@ -10,10 +10,10 @@ FILE * abriRegistroDw(const char *modo){
   char *home = getenv("HOME");
   char *record_path;
 
-  record_path = (char *)malloc(strlen(home)+strlen("/.dw/dw.txt")+1);
+  record_path = (char *)malloc(strlen(home)+strlen("/.dw/curr_wpp")+1);
 
   strcpy(record_path,home);
-  strcat(record_path,"/.dw/dw.txt");
+  strcat(record_path,"/.dw/curr_wpp");
   
   arq = fopen(record_path, modo);
 

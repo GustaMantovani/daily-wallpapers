@@ -1,61 +1,51 @@
 # Daily Wallpapers
-Esse repositório contém um script simples para alterar os papéis de parede do GNOME de forma dinâmica e automatizada alternando de forma circular entre imagens de uma pasta.
+This repository contains a simple script to dynamically and automatically change GNOME wallpapers by cycling through images in a folder.
 
-## Proposta
-Diferente do Windows, o GNOME não suprota a seleção de várias imagens para servirem como background da área de trabalho. Por isso, eu decidi criar um script que, em algum grau, possibilitasse isso. 
+## Proposal
+Unlike Windows, GNOME does not support selecting multiple images to serve as desktop backgrounds. Therefore, I decided to create a script that, to some extent, would make this possible.
 
+## Approach
+The project aims not to be inconvenient or inconsistent, allowing users to still create, move, or delete files in the directory containing the images that will serve as wallpaper.
 
-## Abordagem
-O objetivo do projeto é não ser inconveniente e nem inconsistente, de forma que o usuário ainda possa criar, mover ou apagar arquivos no diretório que contém as imagens que servirão de wallpaper. 
+The overall functioning of the code involves managing the current wallpaper state, selecting the next wallpaper from a directory specified by the user, and interacting with GNOME environment settings.
 
+Upon execution, the script checks if there is a record of the current wallpaper path in a file called `curr_wpp`. If there is no registered path, the script selects the first valid image file in the directory provided by the user. This path is then set as the wallpaper and registered in the `curr_wpp` file.
 
-O funcionamento geral do código envolve a gestão do estado atual do wallpaper, a seleção do próximo wallpaper a partir de um diretório especificado pelo usuário, e a interação com as configurações do ambiente GNOME.
+If there is already a registered path, the script searches for the next valid image file in the directory, maintaining a cyclic sequence. The idea is to provide continuous and automatic rotation of wallpapers, ensuring visual variety on the desktop.
 
+To interact with GNOME environment settings, the script utilizes the `gsettings` tool to change both the wallpaper to light mode and dark mode.
 
-Ao ser executado, o script verifica se há um registro do caminho do wallpaper atual em um arquivo chamado dw.txt. Se não houver um caminho registrado, o script seleciona o primeiro arquivo de imagem válido no diretório fornecido pelo usuário. Esse caminho é então definido como wallpaper e registrado no arquivo dw.txt.
+The use of the `libmagic` library is incorporated into the code to identify image files in the directory. This is essential to prevent unrelated files from being considered as wallpapers. At this point, the `magic` library is used to read the header of files in the directory indicated by the user, checking the MIME-type, which indicates the type of data sets the file represents. This approach goes beyond merely checking the file extension, a technique involving string manipulation, which may not always reflect the true type of the file.
 
+The script also includes measures for user feedback. In case of problems reading the current path or if it is not possible to access the wallpaper path, notifications are displayed using the `notify-send` command.
 
-Se já houver um caminho registrado, o script procura o próximo arquivo de imagem válido no diretório, mantendo uma sequência cíclica. A ideia é proporcionar uma rotação contínua e automática dos papéis de parede, garantindo variedade visual na área de trabalho.
+The program is executed through the `run.sh` script, which exports the necessary graphical environment variables for run-level 3 and serves the directory path chosen by the user, information that is saved in the `dw_wpps_path` file, in the standard input.
 
-Para interagir com as configurações do ambiente GNOME, o script utiliza a ferramenta gsettings de forma que se altere tanto o wallpaper para o modo claro quanto para o modo escuro. 
-
-A utilização da biblioteca libmagic é incorporada ao código para identificar arquivos de imagem no diretório. Isso é essencial para evitar que arquivos não relacionados a imagens sejam considerados como papéis de parede. Nesse ponto, utilliza-se a biblioteca magic, que é muito utilizada pelos sitemas UNIX para definir o tipo de arquivos; no projeto ela é utilizada pra ler o cabeçalho dos arquivos do diretório indicado pelo usuário, verificando o MIME-type, o que irá apontar o tipo de conjuntos de dados que o arquivo representa; essa abordagem vai além da mera verificação da extensão do arquivo, técnica que envolve a manipulação de strings, que nem sempre reflete o tipo verdadeiro do arquivo.
-
-
-O script também inclui medidas para feedback ao usuário. Em caso de problemas na leitura do caminho atual ou se não for possível acessar o caminho do wallpaper, são exibidas notificações utilizando o comando notify-send. 
-
-
-A chamada para execução do programa ocorre por meio do script run.sh, que exporta as variáveis de ambiente gráfico necessárias para o run-level 3 e serve o caminho do diretório escolhido pelo usuário, informação que fica salva no arquivo dw.conf, na entrada padrão.
-
-## Automação e agendamento
-O projeto implementa dois mecanismos de agendamento para execução automática da troca diária de papéis de parede: o Anacron e o Autostart do GNOME.
+## Automation and Scheduling
+The project implements two scheduling mechanisms for automatically executing the daily wallpaper change: Anacron and GNOME Autostart.
 
 ### Anacron:
 
-O Anacron é um agendador de tarefas que difere do Cron tradicional ao lidar com máquinas que podem não estar sempre ligadas. Ele é particularmente útil para garantir que tarefas periódicas sejam executadas, mesmo se o sistema estiver desligado durante parte do tempo. No projeto, o Anacron é utilizado para agendar a execução diária do script `run.sh`, que, por sua vez, invoca o programa principal em C para realizar a troca de papel de parede.
+Anacron is a task scheduler that differs from traditional Cron in handling machines that may not always be on. It is particularly useful for ensuring that periodic tasks are executed even if the system is turned off for part of the time. In the project, Anacron is used to schedule the daily execution of the `run.sh` script, which, in turn, invokes the main C program to perform the wallpaper change.
 
-O arquivo `anacrontab` contém a configuração específica para essa tarefa. A linha `1 0 wallpaper.daily ~/.dw/run.sh` no `anacrontab` define que o script `run.sh` será executado diariamente à meia-noite (1 hora e 0 minutos), associado à tarefa denominada "wallpaper.daily". Assim, mesmo se o sistema estiver desligado à meia-noite, o Anacron garantirá que a troca automática de papéis de parede seja realizada assim que o sistema for iniciado novamente.
+The `anacrontab` file contains the specific configuration for this task. The line `1 0 wallpaper.daily ~/.dw/run.sh` in the `anacrontab` defines that the `run.sh` script will be executed daily at midnight (1 hour and 0 minutes), associated with the task named "wallpaper.daily". Thus, even if the system is off at midnight, Anacron will ensure that the automatic wallpaper change is performed as soon as the system is started again.
 
+### GNOME Autostart:
 
+GNOME Autostart is a mechanism that allows applications and scripts to be automatically executed during the GNOME graphical environment startup process. The `daily-wallpaper.desktop` file is placed in the `~/.config/autostart/` folder, instructing GNOME to start the `run.sh` script during startup.
 
-### Autostart no GNOME:
+This startup file, using the `[Desktop Entry]` entry, specifies the execution of Anacron when initializing the GNOME session. Anacron, in turn, through the command `usr/sbin/anacron -s -t $HOME/.anacron/etc/anacrontab -S $HOME/.anacron/spool`, checks if the job that changes the wallpaper has already been executed on the last day. Thus, the automatic wallpaper change also occurs immediately after logging into the graphical environment, providing a seamless and automated experience.
 
-O Autostart do GNOME é um mecanismo que permite que aplicativos e scripts sejam executados automaticamente durante o processo de inicialização do ambiente gráfico GNOME. O arquivo `daily-wallpaper.desktop` é colocado na pasta `~/.config/autostart/`, indicando ao GNOME que deve iniciar o script `run.sh` durante a inicialização.
+## Usability
+As a user, you only need to run the `install.sh` script, after which you will be prompted to provide the full path to the directory with the images you want to alternate as your background. After that, the script will be up and running.
 
-Esse arquivo de inicialização, utilizando a entrada `[Desktop Entry]`, especifica a execução do anacron ao inicializar a sessão do GNOME. O anacron, por sua vez, pelo comando `usr/sbin/anacron -s -t $HOME/.anacron/etc/anacrontab -S $HOME/.anacron/spool`, verifica se o job que altera o wallpaper já foi executado no último dia. Dessa forma, a troca automática de papéis de parede também ocorre imediatamente após o login no ambiente gráfico, proporcionando uma experiência contínua e automatizada.
+If you want to change the current wallpaper manually, you can run the command `~/.dw/run.sh`.
 
-## Usabilidade
-Como usuário  você só precisa rodar o script install.sh, após isso será solicitado o caminho completo para o diretório com as imagens que você deseja que se alternem em seu plano de fundo. Após isso o script já estará funcionando.
-
-Caso queira mudar o wallpaper atual, você pode rodar o comando `~/.dw/run.sh`.
-
-
-## Notas 
-- É importante forncecer verdadeiramente o caminho completo (incluindo o '/' no fim; EX.: /home/gusta/Pictures/). Isso é uma limitação que daria trabalho demais para ser resolvida e o meu objetivo era desenvolver um projeto simples. 
-- Devido à sua simplicidade, o programa possui algumas limitações. Qualquer alteração na imagem atual, no diretório indicado para o programa, pode causar alguma inconsitência na troca de imagens, porém, de forma alguma, vai interromper ou prejudicar o ciclo de troca de imagem, apenas pode reiniciar o ciclo de papéis de paredes do primeiro candidato no diretório apontado. De qualquer forma, o ciclo irá se reestabelecer e funcionar normalmente.
-- Há, contudo, uma única limitação técnica que pode impactar a execução do script, relacionada às variáveis do ambiente gráfico no run-level 5 do Linux, conforme mencionado no script run.sh do código-fonte do projeto.
-Para testar essa limitação, você pode executar o comando "/usr/sbin/anacron -fn -t $HOME/.anacron/etc/anacrontab -S $HOME/.anacron/spool" após a instalação. Caso o papel de parede não seja alterado imediatamente, isso provavelmente está relacionado ao erro mencionado. A essência desse problema reside na maneira como o serviço cronie executa as tarefas agendadas, assim como os trabalhos do anacron, pois isso ocorre no run-level 3, onde as variáveis do ambiente gráfico não são carregadas.
-Para solucionar esse problema, importamos essas variáveis do ambiente gráfico no script run.sh. Apesar de não serem carregadas no nível em questão, elas ainda são acessíveis. No entanto, observe que o caminho dessas variáveis pode variar entre diferentes sistemas. Se você estiver enfrentando problemas, pode verificar o valor dessas variáveis em seu sistema através de um terminal. Substitua os valores no arquivo ~/.dw/run.sh conforme necessário. Para isso, execute o comando "echo" seguido do nome de cada variável em questão, copie a saída e faça as alterações no arquivo mencionado (EX.: echo $DISPLAY); caso queira aprender mais sobre run-levels eu recomendo o vídeo do [Fábio Akita](https://github.com/akitaonrails): [Como Funciona o Boot de um Linux](https://youtu.be/5F6BbhgvFOE?si=uMYG04_Ye5bLE9Gf&t=2011), onde ele aborda o assunto em questão.
-- O projeto apresenta apenas duas opções de esquemas de horários para execução do script. Isso ocorre porque é complicado manipular arquivos de configuração de agenda de tarefas no Linux por se tratarem de arquivos de configuração sensíveis em muitos sistemas. Ainda sim, você pode personalizar esses esquemas utilizando das mesmas ferramentas que o projeto usa. Por exemplo, caso queria alterar a mudança de wallpapers em função de um tempo t em horas, dias, ou semanas é possível editar o arquivo /etc/crontab da forma que você preferir. Para aprender mais sobre o cron leia o manual da ferramenta em seu Linux (cron(8)). 
-- Caso queira mudar as configurações de forma que o script seja executado levando em conta que o computador não ficará ligado o tempo todo, você pode editar o arquivo ~/.anacron/etc/anacrontab, ou mudar o script que edita ele (o config.sh); para aprender mais sobre o anacron leia o manual da ferramento em seu Linux (anacron(8)).
-- O método de agendamento utilizando o cron não foi citado porque ele é muito simples e fácil de entender. Apenas se adiciona uma entrada para executar o script run.sh em alguma crontab.
+## Notes
+- It is important to provide the full path correctly (including '/' at the end; e.g., /home/user/Pictures/). This is a limitation that would be too much work to resolve, and my goal was to develop a simple project.
+- Due to its simplicity, the program has some limitations. Any changes to the current image in the directory specified for the program may cause some inconsistency in image switching; however, it will not interrupt or disrupt the wallpaper cycle. It may just restart the cycle from the first candidate in the pointed directory. However, the cycle will reestablish and function normally.
+- There is, however, a single technical limitation that may impact script execution, related to graphical environment variables in Linux run-level 5, as mentioned in the `run.sh` script of the project's source code.
+- To solve this problem, these graphical environment variables are imported into the `run.sh` script. Despite not being loaded at the level in question, they are still accessible. However, note that the path of these variables may vary between different systems. If you encounter issues, you can check the value of these variables on your system through a terminal. Replace the values in the `~/.dw/run.sh` file as needed. To learn more about run-levels, I recommend watching Fábio Akita's video: [Como Funciona o Boot de um Linux](https://youtu.be/5F6BbhgvFOE?si=uMYG04_Ye5bLE9Gf&t=2011), where he addresses the subject in question.
+- The project provides only two scheduling options for script execution times. This is because manipulating task scheduling configuration files in Linux can be complicated due to their sensitive configuration nature on many systems. Still, you can customize these schemes using the same tools the project uses. For example, if you want to change wallpaper switching based on a time 't' in hours, days, or weeks, you can edit the `/etc/crontab` file as you prefer. To learn more about cron, read the tool's manual on your Linux system (`cron(8)`).
+- If you want to change the settings so that the script is executed considering that the computer will not be on all the time, you can edit the `~/.anacron/etc/anacrontab` file or change the script that edits it (`config.sh`). To learn more about Anacron, read the tool's manual on your Linux system (`anacron(8)`).
+- The scheduling method using cron was not mentioned because it is very simple and easy to understand. You simply add an entry to execute the `run.sh` script in some crontab.
