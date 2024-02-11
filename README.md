@@ -42,10 +42,12 @@ O arquivo `anacrontab` contém a configuração específica para essa tarefa. A 
 
 O Autostart do GNOME é um mecanismo que permite que aplicativos e scripts sejam executados automaticamente durante o processo de inicialização do ambiente gráfico GNOME. O arquivo `daily-wallpaper.desktop` é colocado na pasta `~/.config/autostart/`, indicando ao GNOME que deve iniciar o script `run.sh` durante a inicialização.
 
-Esse arquivo de inicialização, utilizando a entrada `[Desktop Entry]`, especifica a execução do anacron ao inicializar a sessão do GNOME. O anacron, por sua vez, pelo comando `usr/sbin/anacron -s -t /home/gusta/.anacron/etc/anacrontab -S /home/gusta/.anacron/spool`, verifica se o job que altera o wallpaper já foi executado no último dia. Dessa forma, a troca automática de papéis de parede também ocorre imediatamente após o login no ambiente gráfico, proporcionando uma experiência contínua e automatizada.
+Esse arquivo de inicialização, utilizando a entrada `[Desktop Entry]`, especifica a execução do anacron ao inicializar a sessão do GNOME. O anacron, por sua vez, pelo comando `usr/sbin/anacron -s -t $HOME/.anacron/etc/anacrontab -S $HOME/.anacron/spool`, verifica se o job que altera o wallpaper já foi executado no último dia. Dessa forma, a troca automática de papéis de parede também ocorre imediatamente após o login no ambiente gráfico, proporcionando uma experiência contínua e automatizada.
 
 ## Usabilidade
 Como usuário  você só precisa rodar o script install.sh, após isso será solicitado o caminho completo para o diretório com as imagens que você deseja que se alternem em seu plano de fundo. Após isso o script já estará funcionando.
+
+Caso queira mudar o wallpaper atual, você pode rodar o comando `~/.dw/run.sh`.
 
 
 ## Notas 
