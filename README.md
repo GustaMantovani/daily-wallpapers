@@ -1,7 +1,7 @@
 # Daily Wallpapers
 This repository contains a simple script to dynamically and automatically change GNOME wallpapers by cycling through images in a folder. 
 
-### Demonstrations
+#### Demonstrations:
 [Changing the wallpaper every day](https://youtu.be/_eVYIOrh-QE?si=hFgjnn390-8RXQCV)
     
 [Changing the wallpaper every t minutes](https://youtu.be/rcM18tbNGV8?si=gbpvxNiV0wXwUpIq)
