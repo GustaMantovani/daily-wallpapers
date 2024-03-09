@@ -5,6 +5,33 @@
 #include <string.h>
 #include <dirent.h>
 
+FILE * openDwRecord(const char *mode);
+void readCurrentWallpaper(char *currentWallpaper);
+void changeWallpaper(char *wallpaperPath);
+void setFirstCandidateWallpaper(char *path);
+void setNextCandidateWallpaper(char *path, char *currentWallpaperPath);
+
+int main(){
+  char currentWallpaper[PATH_MAX];
+  char path[PATH_MAX];
+
+  // stdin
+  fgets(path, PATH_MAX, stdin);
+  path[strlen(path)-1] = '\0';
+
+  readCurrentWallpaper(currentWallpaper);
+
+  if(strlen(currentWallpaper) == 0){
+    // set the first candidate as wallpaper
+    setFirstCandidateWallpaper(path);
+  } else {
+    // search the list and set the next (if it's the first or no longer in the list, set the first)
+    setNextCandidateWallpaper(path, currentWallpaper);
+  }
+
+  return 0;
+}
+
 FILE * openDwRecord(const char *mode){
   FILE *file;
   char *home = getenv("HOME");
@@ -141,25 +168,4 @@ void setNextCandidateWallpaper(char *path, char *currentWallpaperPath){
   setFirstCandidateWallpaper(path);
   magic_close(magic_cookie);
   closedir(dir);
-}
-
-int main(){
-  char currentWallpaper[PATH_MAX];
-  char path[PATH_MAX];
-
-  // stdin
-  fgets(path, PATH_MAX, stdin);
-  path[strlen(path)-1] = '\0';
-
-  readCurrentWallpaper(currentWallpaper);
-
-  if(strlen(currentWallpaper) == 0){
-    // set the first candidate as wallpaper
-    setFirstCandidateWallpaper(path);
-  } else {
-    // search the list and set the next (if it's the first or no longer in the list, set the first)
-    setNextCandidateWallpaper(path, currentWallpaper);
-  }
-
-  return 0;
 }
